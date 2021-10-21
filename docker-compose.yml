@@ -1,0 +1,21 @@
+version: '2'
+services:
+  cronjob-controller:
+    image: docker
+    restart: always
+    volumes: ["/var/run/docker.sock:/var/run/docker.sock"]
+    command: ["/bin/sh", "-c", "while true; do
+        currenthour=$$(date +%H);
+        currentminutes=$$(date +%M);
+        if [[ \"$$currenthour\" == \"01\" ]] && [[ \"$$currentminutes\" == \"30\" ]]; then
+            docker start myjob;
+            sleep 60;
+        else
+            sleep 30;
+        fi;
+        done"]
+    restart: unless-stopped
+
+  hello-world:
+    image: hello-world
+    container_name: myjob
